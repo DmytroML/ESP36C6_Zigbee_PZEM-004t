@@ -288,10 +288,10 @@ static void esp_zb_task(void *pvParameters)
     /* AC Formatting */
     uint16_t u_value =  (uint16_t)(1);
     //esp_zb_electrical_meas_cluster_add_attr(esp_zb_PZEM_004t_1_cluster,ESP_ZB_ZCL_ATTR_ELECTRICAL_MEASUREMENT_ACCURRENT_MULTIPLIER_ID, &u_value);     //!< Provides a value to be multiplied against the @e InstantaneousCurrent and @e RMSCurrent attributes 
-    esp_zb_electrical_meas_cluster_add_attr(esp_zb_PZEM_004t_1_cluster,ESP_ZB_ZCL_ATTR_ELECTRICAL_MEASUREMENT_ACPOWER_MULTIPLIER_ID, &u_value);
-    uint16_t u_value_1000 = (uint16_t)(1000); 
+    //esp_zb_electrical_meas_cluster_add_attr(esp_zb_PZEM_004t_1_cluster,ESP_ZB_ZCL_ATTR_ELECTRICAL_MEASUREMENT_ACPOWER_MULTIPLIER_ID, &u_value);
+    uint16_t u_value_1000 = (uint16_t)(10); 
     //esp_zb_electrical_meas_cluster_add_attr(esp_zb_PZEM_004t_1_cluster,ESP_ZB_ZCL_ATTR_ELECTRICAL_MEASUREMENT_ACCURRENT_DIVISOR_ID,&u_value_1000);    //!< Provides a value to be divided against the @e ACCurrent, @e InstantaneousCurrent and @e RMSCurrent attributes. 
-    esp_zb_electrical_meas_cluster_add_attr(esp_zb_PZEM_004t_1_cluster,ESP_ZB_ZCL_ATTR_ELECTRICAL_MEASUREMENT_ACPOWER_DIVISOR_ID,&u_value_1000);
+    //esp_zb_electrical_meas_cluster_add_attr(esp_zb_PZEM_004t_1_cluster,ESP_ZB_ZCL_ATTR_ELECTRICAL_MEASUREMENT_ACPOWER_DIVISOR_ID,&u_value_1000);
     
     ESP_ERROR_CHECK(esp_zb_cluster_list_add_electrical_meas_cluster(cluster_list, esp_zb_PZEM_004t_1_cluster, ESP_ZB_ZCL_CLUSTER_SERVER_ROLE));  
      
@@ -350,10 +350,10 @@ void PMonTask( void * pz )
         // Update config struct with new address
         pzConf.pzem_addr = 0x01;
         PzemGetValues( &pzConf, &pzValues );
-        ESP_LOGI("PZEM-004t 0x03:","Vrms: %.3fV - Irms: %.3fA - P: %.5fW - E: %.5fWh - Freq: %.1fHz - PF: %.2f", pzValues.voltage, pzValues.current, pzValues.power, pzValues.energy, pzValues.frequency, pzValues.pf );
+        //ESP_LOGI("PZEM-004t 0x03:","Vrms: %.3fV - Irms: %.3fA - P: %.5fW - E: %.5fWh - Freq: %.1fHz - PF: %.2f", pzValues.voltage, pzValues.current, pzValues.power, pzValues.energy, pzValues.frequency, pzValues.pf );
         RMSVOLTAGE= (uint16_t)(pzValues.voltage); //!< Represents the most recent RMS voltage reading in @e Volts (V). 
         //RMSCURRENT= (uint16_t)(pzValues.current*1000); //!< Represents the most recent RMS current reading in @e Amps (A). 
-        ACTIVE_POWER= (int16_t)(pzValues.power*1000);  //!< Represents the single phase or Phase A, current demand of active power delivered or received at the premises, in @e Watts (W). 
+        ACTIVE_POWER= (int16_t)(pzValues.power);  //!< Represents the single phase or Phase A, current demand of active power delivered or received at the premises, in @e Watts (W). 
         //POWER_FACTOR= (int16_t)(pzValues.pf*100);  //!< Contains the single phase or PhaseA, Power Factor ratio in 1/100th. 
         AC_FREQUENCY= (int16_t)(pzValues.frequency);  //!< The ACFrequency attribute represents the most recent AC Frequency reading in Hertz (Hz). 
         Summation_delivered= (uint64_t)(pzValues.energy*1000);  //!< Active power represents the current demand of active power delivered or received at the premises, in @e kW 
@@ -362,10 +362,10 @@ void PMonTask( void * pz )
         // Update config struct with new address
         pzConf.pzem_addr = 0x02;
         PzemGetValues( &pzConf, &pzValues );
-        ESP_LOGI("PZEM-004t 0x02:","Vrms: %.3fV - Irms: %.3fA - P: %.5fW - E: %.5fWh - Freq: %.1fHz - PF: %.2f", pzValues.voltage, pzValues.current, pzValues.power, pzValues.energy, pzValues.frequency, pzValues.pf );
+        //ESP_LOGI("PZEM-004t 0x02:","Vrms: %.3fV - Irms: %.3fA - P: %.5fW - E: %.5fWh - Freq: %.1fHz - PF: %.2f", pzValues.voltage, pzValues.current, pzValues.power, pzValues.energy, pzValues.frequency, pzValues.pf );
         RMSVOLTAGE_1= (uint16_t)(pzValues.voltage); //!< Represents the most recent RMS voltage reading in @e Volts (V). 
         //RMSCURRENT_1= (uint16_t)(pzValues.current*1000); //!< Represents the most recent RMS current reading in @e Amps (A). 
-        ACTIVE_POWER_1= (int16_t)(pzValues.power*1000);  //!< Represents the single phase or Phase A, current demand of active power delivered or received at the premises, in @e Watts (W). 
+        ACTIVE_POWER_1= (int16_t)(pzValues.power);  //!< Represents the single phase or Phase A, current demand of active power delivered or received at the premises, in @e Watts (W). 
         //POWER_FACTOR_1= (int16_t)(pzValues.pf*100);  //!< Contains the single phase or PhaseA, Power Factor ratio in 1/100th. 
         AC_FREQUENCY_1= (int16_t)(pzValues.frequency);  //!< The ACFrequency attribute represents the most recent AC Frequency reading in Hertz (Hz). 
         Summation_delivered_1= (uint64_t)(pzValues.energy*1000);  //!< Active power represents the current demand of active power delivered or received at the premises, in @e kW 
@@ -374,11 +374,11 @@ void PMonTask( void * pz )
         // Update config struct with new address
         pzConf.pzem_addr = 0x03;
         PzemGetValues( &pzConf, &pzValues );
-        ESP_LOGI("PZEM-004t 0x01:","Vrms: %.3fV - Irms: %.3fA - P: %.5fW - E: %.5fWh - Freq: %.1fHz - PF: %.2f", pzValues.voltage, pzValues.current, pzValues.power, pzValues.energy, pzValues.frequency, pzValues.pf );
+        //ESP_LOGI("PZEM-004t 0x01:","Vrms: %.3fV - Irms: %.3fA - P: %.5fW - E: %.5fWh - Freq: %.1fHz - PF: %.2f", pzValues.voltage, pzValues.current, pzValues.power, pzValues.energy, pzValues.frequency, pzValues.pf );
 
         RMSVOLTAGE_2= (uint16_t)(pzValues.voltage); //!< Represents the most recent RMS voltage reading in @e Volts (V). 
         //RMSCURRENT_2= (uint16_t)(pzValues.current*1000); //!< Represents the most recent RMS current reading in @e Amps (A). 
-        ACTIVE_POWER_2= (int16_t)(pzValues.power*1000);  //!< Represents the single phase or Phase A, current demand of active power delivered or received at the premises, in @e Watts (W). 
+        ACTIVE_POWER_2= (int16_t)(pzValues.power);  //!< Represents the single phase or Phase A, current demand of active power delivered or received at the premises, in @e Watts (W). 
         //POWER_FACTOR= (int16_t)(pzValues.pf*100);  //!< Contains the single phase or PhaseA, Power Factor ratio in 1/100th. 
         AC_FREQUENCY_2= (int16_t)(pzValues.frequency);  //!< The ACFrequency attribute represents the most recent AC Frequency reading in Hertz (Hz). 
         Summation_delivered_2= (uint64_t)(pzValues.energy*1000);  //!< Active power represents the current demand of active power delivered or received at the premises, in @e kW 
