@@ -26,7 +26,7 @@
 #define ESP_TEMP_SENSOR_UPDATE_INTERVAL (1)     /* Local sensor update interval (second) */
 #define ESP_TEMP_SENSOR_MIN_VALUE       (-10)   /* Local sensor min measured value (degree Celsius) */
 #define ESP_TEMP_SENSOR_MAX_VALUE       (80)    /* Local sensor max measured value (degree Celsius) */
-#define MANUFACTURER_NAME               "\x08""TEST08"
+#define MANUFACTURER_NAME               "\x10""ESP_EN_MONITOR"
 #define MODEL_IDENTIFIER                "\x09"CONFIG_IDF_TARGET
 #define MODEL_NAME                      "\r""PZEM Sensor"
 #define FIRMWARE_VERSION                "\t""ver-0.1"

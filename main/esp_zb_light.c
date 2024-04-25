@@ -28,7 +28,6 @@
 #endif
 
 static const char *TAG = "ESP_ZB_ZB_ZCZR";
-#define NEW_ADDRESS     0x03            // <= New Device Address (change is not permanent)
 
 /* @brief Set ESP32  Serial Configuration */
 pzem_setup_t pzConf =
@@ -46,12 +45,25 @@ void PMonTask( void * pz );
 
 bool  connected = false;
 uint16_t RMSVOLTAGE= 0; //!< Represents the most recent RMS voltage reading in @e Volts (V). 
-uint16_t RMSCURRENT= 0; //!< Represents the most recent RMS current reading in @e Amps (A). 
+//uint16_t RMSCURRENT= 0; //!< Represents the most recent RMS current reading in @e Amps (A). 
 int16_t ACTIVE_POWER= 0;  //!< Represents the single phase or Phase A, current demand of active power delivered or received at the premises, in @e Watts (W). 
-uint16_t POWER_FACTOR= 0;  //!< Contains the single phase or PhaseA, Power Factor ratio in 1/100th. 
-  /* AC Measurement (Non Phase) */
+//uint16_t POWER_FACTOR= 0;  //!< Contains the single phase or PhaseA, Power Factor ratio in 1/100th. 
 uint16_t AC_FREQUENCY= 0;  //!< The ACFrequency attribute represents the most recent AC Frequency reading in Hertz (Hz). 
 uint64_t Summation_delivered= 0;  //!< Active power represents the current demand of active power delivered or received at the premises, in @e kW 
+
+uint16_t RMSVOLTAGE_1= 0; //!< Represents the most recent RMS voltage reading in @e Volts (V). 
+//uint16_t RMSCURRENT_1= 0; //!< Represents the most recent RMS current reading in @e Amps (A). 
+int16_t ACTIVE_POWER_1= 0;  //!< Represents the single phase or Phase A, current demand of active power delivered or received at the premises, in @e Watts (W). 
+//uint16_t POWER_FACTOR_1= 0;  //!< Contains the single phase or PhaseA, Power Factor ratio in 1/100th. 
+uint16_t AC_FREQUENCY_1= 0;  //!< The ACFrequency attribute represents the most recent AC Frequency reading in Hertz (Hz). 
+uint64_t Summation_delivered_1= 0;  //!< Active power represents the current demand of active power delivered or received at the premises, in @e kW 
+
+uint16_t RMSVOLTAGE_2= 0; //!< Represents the most recent RMS voltage reading in @e Volts (V). 
+//uint16_t RMSCURRENT_2= 0; //!< Represents the most recent RMS current reading in @e Amps (A). 
+int16_t ACTIVE_POWER_2= 0;  //!< Represents the single phase or Phase A, current demand of active power delivered or received at the premises, in @e Watts (W). 
+//uint16_t POWER_FACTOR_2= 0;  //!< Contains the single phase or PhaseA, Power Factor ratio in 1/100th. 
+uint16_t AC_FREQUENCY_2= 0;  //!< The ACFrequency attribute represents the most recent AC Frequency reading in Hertz (Hz). 
+uint64_t Summation_delivered_2= 0;  //!< Active power represents the current demand of active power delivered or received at the premises, in @e kW 
 
 
 
@@ -78,63 +90,76 @@ static void esp_app_buttons_handler(switch_func_pair_t *button_func_pair)
         esp_zb_zcl_report_attr_cmd_req(&report_attr_cmd);
         esp_zb_lock_release();
         ESP_EARLY_LOGI(TAG, "Send 'report attributes' command");
-
     }
 }
 
 static void esp_app_temp_sensor_handler(float temperature)
 {
-
     int16_t measured_value = zb_temperature_to_s16(temperature);
-
-
-
-
     /* Update temperature sensor measured value */
     esp_zb_lock_acquire(portMAX_DELAY);
     esp_zb_zcl_set_attribute_val(HA_COLOR_DIMMABLE_LIGHT_ENDPOINT, ESP_ZB_ZCL_CLUSTER_ID_TEMP_MEASUREMENT, ESP_ZB_ZCL_CLUSTER_SERVER_ROLE,
                                 ESP_ZB_ZCL_ATTR_TEMP_MEASUREMENT_VALUE_ID, &measured_value, false);
-
-
     esp_zb_zcl_set_attribute_val(HA_COLOR_DIMMABLE_LIGHT_ENDPOINT, ESP_ZB_ZCL_CLUSTER_ID_ELECTRICAL_MEASUREMENT, ESP_ZB_ZCL_CLUSTER_SERVER_ROLE,
                                 ESP_ZB_ZCL_ATTR_ELECTRICAL_MEASUREMENT_RMSVOLTAGE_ID, &RMSVOLTAGE, false);  //!< Represents the most recent RMS voltage reading in @e Volts (V). 
-    esp_zb_zcl_set_attribute_val(HA_COLOR_DIMMABLE_LIGHT_ENDPOINT, ESP_ZB_ZCL_CLUSTER_ID_ELECTRICAL_MEASUREMENT, ESP_ZB_ZCL_CLUSTER_SERVER_ROLE,
-                                ESP_ZB_ZCL_ATTR_ELECTRICAL_MEASUREMENT_RMSCURRENT_ID, &RMSCURRENT, false); //!< Represents the most recent RMS current reading in @e Amps (A). 
+    //esp_zb_zcl_set_attribute_val(HA_COLOR_DIMMABLE_LIGHT_ENDPOINT, ESP_ZB_ZCL_CLUSTER_ID_ELECTRICAL_MEASUREMENT, ESP_ZB_ZCL_CLUSTER_SERVER_ROLE,
+    //                            ESP_ZB_ZCL_ATTR_ELECTRICAL_MEASUREMENT_RMSCURRENT_ID, &RMSCURRENT, false); //!< Represents the most recent RMS current reading in @e Amps (A). 
     esp_zb_zcl_set_attribute_val(HA_COLOR_DIMMABLE_LIGHT_ENDPOINT, ESP_ZB_ZCL_CLUSTER_ID_ELECTRICAL_MEASUREMENT, ESP_ZB_ZCL_CLUSTER_SERVER_ROLE,
                                 ESP_ZB_ZCL_ATTR_ELECTRICAL_MEASUREMENT_ACTIVE_POWER_ID, &ACTIVE_POWER, false);  //!< Represents the single phase or Phase A, current demand of active power delivered or received at the premises, in @e Watts (W). 
-    esp_zb_zcl_set_attribute_val(HA_COLOR_DIMMABLE_LIGHT_ENDPOINT, ESP_ZB_ZCL_CLUSTER_ID_ELECTRICAL_MEASUREMENT, ESP_ZB_ZCL_CLUSTER_SERVER_ROLE,
-                                ESP_ZB_ZCL_ATTR_ELECTRICAL_MEASUREMENT_POWER_FACTOR_ID, &POWER_FACTOR, false);  //!< Contains the single phase or PhaseA, Power Factor ratio in 1/100th. 
+    //esp_zb_zcl_set_attribute_val(HA_COLOR_DIMMABLE_LIGHT_ENDPOINT, ESP_ZB_ZCL_CLUSTER_ID_ELECTRICAL_MEASUREMENT, ESP_ZB_ZCL_CLUSTER_SERVER_ROLE,
+    //                            ESP_ZB_ZCL_ATTR_ELECTRICAL_MEASUREMENT_POWER_FACTOR_ID, &POWER_FACTOR, false);  //!< Contains the single phase or PhaseA, Power Factor ratio in 1/100th. 
    esp_zb_zcl_set_attribute_val(HA_COLOR_DIMMABLE_LIGHT_ENDPOINT, ESP_ZB_ZCL_CLUSTER_ID_ELECTRICAL_MEASUREMENT, ESP_ZB_ZCL_CLUSTER_SERVER_ROLE,
                                 ESP_ZB_ZCL_ATTR_ELECTRICAL_MEASUREMENT_AC_FREQUENCY_ID, &AC_FREQUENCY, false);  //!< The ACFrequency attribute represents the most recent AC Frequency reading in Hertz (Hz). 
     esp_zb_zcl_set_attribute_val(HA_COLOR_DIMMABLE_LIGHT_ENDPOINT, ESP_ZB_ZCL_CLUSTER_ID_METERING, ESP_ZB_ZCL_CLUSTER_SERVER_ROLE,
                                 ESP_ZB_ZCL_ATTR_METERING_CURRENT_SUMMATION_DELIVERED_ID, &Summation_delivered, false);
 
 
+    esp_zb_zcl_set_attribute_val(9, ESP_ZB_ZCL_CLUSTER_ID_ELECTRICAL_MEASUREMENT, ESP_ZB_ZCL_CLUSTER_SERVER_ROLE,
+                                ESP_ZB_ZCL_ATTR_ELECTRICAL_MEASUREMENT_RMSVOLTAGE_ID, &RMSVOLTAGE_1, false);  //!< Represents the most recent RMS voltage reading in @e Volts (V). 
+    //esp_zb_zcl_set_attribute_val(9, ESP_ZB_ZCL_CLUSTER_ID_ELECTRICAL_MEASUREMENT, ESP_ZB_ZCL_CLUSTER_SERVER_ROLE,
+    //                            ESP_ZB_ZCL_ATTR_ELECTRICAL_MEASUREMENT_RMSCURRENT_ID, &RMSCURRENT_1, false); //!< Represents the most recent RMS current reading in @e Amps (A). 
+    esp_zb_zcl_set_attribute_val(9, ESP_ZB_ZCL_CLUSTER_ID_ELECTRICAL_MEASUREMENT, ESP_ZB_ZCL_CLUSTER_SERVER_ROLE,
+                                ESP_ZB_ZCL_ATTR_ELECTRICAL_MEASUREMENT_ACTIVE_POWER_ID, &ACTIVE_POWER_1, false);  //!< Represents the single phase or Phase A, current demand of active power delivered or received at the premises, in @e Watts (W). 
+    //esp_zb_zcl_set_attribute_val(HA_COLOR_DIMMABLE_LIGHT_ENDPOINT, ESP_ZB_ZCL_CLUSTER_ID_ELECTRICAL_MEASUREMENT, ESP_ZB_ZCL_CLUSTER_SERVER_ROLE,
+    //                            ESP_ZB_ZCL_ATTR_ELECTRICAL_MEASUREMENT_POWER_FACTOR_ID, &POWER_FACTOR, false);  //!< Contains the single phase or PhaseA, Power Factor ratio in 1/100th. 
+   esp_zb_zcl_set_attribute_val(9, ESP_ZB_ZCL_CLUSTER_ID_ELECTRICAL_MEASUREMENT, ESP_ZB_ZCL_CLUSTER_SERVER_ROLE,
+                                ESP_ZB_ZCL_ATTR_ELECTRICAL_MEASUREMENT_AC_FREQUENCY_ID, &AC_FREQUENCY_1, false);  //!< The ACFrequency attribute represents the most recent AC Frequency reading in Hertz (Hz). 
+    esp_zb_zcl_set_attribute_val(9, ESP_ZB_ZCL_CLUSTER_ID_METERING, ESP_ZB_ZCL_CLUSTER_SERVER_ROLE,
+                                ESP_ZB_ZCL_ATTR_METERING_CURRENT_SUMMATION_DELIVERED_ID, &Summation_delivered_1, false);
+
+
+
+    esp_zb_zcl_set_attribute_val(8, ESP_ZB_ZCL_CLUSTER_ID_ELECTRICAL_MEASUREMENT, ESP_ZB_ZCL_CLUSTER_SERVER_ROLE,
+                                ESP_ZB_ZCL_ATTR_ELECTRICAL_MEASUREMENT_RMSVOLTAGE_ID, &RMSVOLTAGE_2, false);  //!< Represents the most recent RMS voltage reading in @e Volts (V). 
+    //esp_zb_zcl_set_attribute_val(8, ESP_ZB_ZCL_CLUSTER_ID_ELECTRICAL_MEASUREMENT, ESP_ZB_ZCL_CLUSTER_SERVER_ROLE,
+    //                            ESP_ZB_ZCL_ATTR_ELECTRICAL_MEASUREMENT_RMSCURRENT_ID, &RMSCURRENT_2, false); //!< Represents the most recent RMS current reading in @e Amps (A). 
+    esp_zb_zcl_set_attribute_val(8, ESP_ZB_ZCL_CLUSTER_ID_ELECTRICAL_MEASUREMENT, ESP_ZB_ZCL_CLUSTER_SERVER_ROLE,
+                                ESP_ZB_ZCL_ATTR_ELECTRICAL_MEASUREMENT_ACTIVE_POWER_ID, &ACTIVE_POWER_2, false);  //!< Represents the single phase or Phase A, current demand of active power delivered or received at the premises, in @e Watts (W). 
+    //esp_zb_zcl_set_attribute_val(HA_COLOR_DIMMABLE_LIGHT_ENDPOINT, ESP_ZB_ZCL_CLUSTER_ID_ELECTRICAL_MEASUREMENT, ESP_ZB_ZCL_CLUSTER_SERVER_ROLE,
+    //                            ESP_ZB_ZCL_ATTR_ELECTRICAL_MEASUREMENT_POWER_FACTOR_ID, &POWER_FACTOR, false);  //!< Contains the single phase or PhaseA, Power Factor ratio in 1/100th. 
+   esp_zb_zcl_set_attribute_val(8, ESP_ZB_ZCL_CLUSTER_ID_ELECTRICAL_MEASUREMENT, ESP_ZB_ZCL_CLUSTER_SERVER_ROLE,
+                                ESP_ZB_ZCL_ATTR_ELECTRICAL_MEASUREMENT_AC_FREQUENCY_ID, &AC_FREQUENCY_2, false);  //!< The ACFrequency attribute represents the most recent AC Frequency reading in Hertz (Hz). 
+    esp_zb_zcl_set_attribute_val(8, ESP_ZB_ZCL_CLUSTER_ID_METERING, ESP_ZB_ZCL_CLUSTER_SERVER_ROLE,
+                                ESP_ZB_ZCL_ATTR_METERING_CURRENT_SUMMATION_DELIVERED_ID, &Summation_delivered_2, false);
+
 
 
     esp_zb_lock_release();
-
 }
 /********************* Define functions **************************/
 static esp_err_t deferred_driver_init(void)
 {
-
-    temperature_sensor_config_t temp_sensor_config =
-                                TEMPERATURE_SENSOR_CONFIG_DEFAULT(ESP_TEMP_SENSOR_MIN_VALUE, ESP_TEMP_SENSOR_MAX_VALUE);
-
-
+    temperature_sensor_config_t temp_sensor_config =TEMPERATURE_SENSOR_CONFIG_DEFAULT(ESP_TEMP_SENSOR_MIN_VALUE, ESP_TEMP_SENSOR_MAX_VALUE);
     ESP_RETURN_ON_ERROR(temp_sensor_driver_init(&temp_sensor_config, ESP_TEMP_SENSOR_UPDATE_INTERVAL, esp_app_temp_sensor_handler), TAG,
                         "Failed to initialize temperature sensor");
     ESP_RETURN_ON_FALSE(switch_driver_init(button_func_pair, PAIR_SIZE(button_func_pair), esp_app_buttons_handler), ESP_FAIL, TAG,
                         "Failed to initialize switch driver");
-
     return ESP_OK;
 }
 static void bdb_start_top_level_commissioning_cb(uint8_t mode_mask)
 {
     ESP_RETURN_ON_FALSE(esp_zb_bdb_start_top_level_commissioning(mode_mask) == ESP_OK, , TAG, "Failed to start Zigbee commissioning");
 }
-
 void esp_zb_app_signal_handler(esp_zb_app_signal_t *signal_struct)
 {
     uint32_t *p_sg_p = signal_struct->p_app_signal;
@@ -187,91 +212,13 @@ void esp_zb_app_signal_handler(esp_zb_app_signal_t *signal_struct)
         break;
     }
 }
-/*
-static esp_err_t zb_attribute_handler(const esp_zb_zcl_set_attr_value_message_t *message)
-{
-    esp_err_t ret = ESP_OK;
-    bool light_state = 0;
-    uint8_t light_level = 0;
-    uint16_t light_color_x = 0;
-    uint16_t light_color_y = 0;
-    ESP_RETURN_ON_FALSE(message, ESP_FAIL, TAG, "Empty message");
-    ESP_RETURN_ON_FALSE(message->info.status == ESP_ZB_ZCL_STATUS_SUCCESS, ESP_ERR_INVALID_ARG, TAG, "Received message: error status(%d)",
-                        message->info.status);
-    ESP_LOGI(TAG, "Received message: endpoint(%d), cluster(0x%x), attribute(0x%x), data size(%d)", message->info.dst_endpoint, message->info.cluster,
-             message->attribute.id, message->attribute.data.size);
-    if (message->info.dst_endpoint == HA_COLOR_DIMMABLE_LIGHT_ENDPOINT) {
-        switch (message->info.cluster) {
-        case ESP_ZB_ZCL_CLUSTER_ID_ON_OFF:
-            if (message->attribute.id == ESP_ZB_ZCL_ATTR_ON_OFF_ON_OFF_ID && message->attribute.data.type == ESP_ZB_ZCL_ATTR_TYPE_BOOL) {
-                light_state = message->attribute.data.value ? *(bool *)message->attribute.data.value : light_state;
-                ESP_LOGI(TAG, "Light sets to %s", light_state ? "On" : "Off");
-                light_driver_set_power(light_state);
-            } else {
-                ESP_LOGW(TAG, "On/Off cluster data: attribute(0x%x), type(0x%x)", message->attribute.id, message->attribute.data.type);
-            }
-            break;
-        case ESP_ZB_ZCL_CLUSTER_ID_COLOR_CONTROL:
-            if (message->attribute.id == ESP_ZB_ZCL_ATTR_COLOR_CONTROL_CURRENT_X_ID && message->attribute.data.type == ESP_ZB_ZCL_ATTR_TYPE_U16) {
-                light_color_x = message->attribute.data.value ? *(uint16_t *)message->attribute.data.value : light_color_x;
-                light_color_y = *(uint16_t *)esp_zb_zcl_get_attribute(message->info.dst_endpoint, message->info.cluster,
-                                                                      ESP_ZB_ZCL_CLUSTER_SERVER_ROLE, ESP_ZB_ZCL_ATTR_COLOR_CONTROL_CURRENT_Y_ID)
-                                     ->data_p;
-                ESP_LOGI(TAG, "Light color x changes to 0x%x", light_color_x);
-            } else if (message->attribute.id == ESP_ZB_ZCL_ATTR_COLOR_CONTROL_CURRENT_Y_ID &&
-                       message->attribute.data.type == ESP_ZB_ZCL_ATTR_TYPE_U16) {
-                light_color_y = message->attribute.data.value ? *(uint16_t *)message->attribute.data.value : light_color_y;
-                light_color_x = *(uint16_t *)esp_zb_zcl_get_attribute(message->info.dst_endpoint, message->info.cluster,
-                                                                      ESP_ZB_ZCL_CLUSTER_SERVER_ROLE, ESP_ZB_ZCL_ATTR_COLOR_CONTROL_CURRENT_X_ID)
-                                     ->data_p;
-                ESP_LOGI(TAG, "Light color y changes to 0x%x", light_color_y);
-            } else {
-                ESP_LOGW(TAG, "Color control cluster data: attribute(0x%x), type(0x%x)", message->attribute.id, message->attribute.data.type);
-            }
-            light_driver_set_color_xy(light_color_x, light_color_y);
-            break;
-        case ESP_ZB_ZCL_CLUSTER_ID_LEVEL_CONTROL:
-            if (message->attribute.id == ESP_ZB_ZCL_ATTR_LEVEL_CONTROL_CURRENT_LEVEL_ID && message->attribute.data.type == ESP_ZB_ZCL_ATTR_TYPE_U8) {
-                light_level = message->attribute.data.value ? *(uint8_t *)message->attribute.data.value : light_level;
-                light_driver_set_level((uint8_t)light_level);
-                ESP_LOGI(TAG, "Light level changes to %d", light_level);
-            } else {
-                ESP_LOGW(TAG, "Level Control cluster data: attribute(0x%x), type(0x%x)", message->attribute.id, message->attribute.data.type);
-            }
-            break;
-        default:
-            ESP_LOGI(TAG, "Message data: cluster(0x%x), attribute(0x%x)  ", message->info.cluster, message->attribute.id);
-        }
-    }
-    return ret;
-}
 
-static esp_err_t zb_action_handler(esp_zb_core_action_callback_id_t callback_id, const void *message)
-{
-    esp_err_t ret = ESP_OK;
-    switch (callback_id) {
-    case ESP_ZB_CORE_SET_ATTR_VALUE_CB_ID:
-        ret = zb_attribute_handler((esp_zb_zcl_set_attr_value_message_t *)message);
-        break;
-    default:
-        ESP_LOGW(TAG, "Receive Zigbee action(0x%x) callback", callback_id);
-        break;
-    }
-    return ret;
-}
-*/
 static void esp_zb_task(void *pvParameters)
 {
     /* initialize Zigbee stack */
     esp_zb_cfg_t zb_nwk_cfg = ESP_ZB_ZR_CONFIG();
     esp_zb_init(&zb_nwk_cfg);
-
-
-    //esp_zb_color_dimmable_light_cfg_t light_cfg = ESP_ZB_DEFAULT_COLOR_DIMMABLE_LIGHT_CONFIG();
     esp_zb_configuration_tool_cfg_t sensor_cfg =ESP_ZB_DEFAULT_CONFIGURATION_TOOL_CONFIG();
-    
-    //esp_zb_ep_list_t *esp_zb_color_dimmable_light_ep = esp_zb_color_dimmable_light_ep_create(HA_COLOR_DIMMABLE_LIGHT_ENDPOINT, &sensor_cfg);
-
     esp_zb_ep_list_t *esp_zb_sensor_ep = esp_zb_ep_list_create();
 
     esp_zb_endpoint_config_t endpoint_config = {
@@ -279,30 +226,32 @@ static void esp_zb_task(void *pvParameters)
         .app_profile_id = ESP_ZB_AF_HA_PROFILE_ID,
         //.app_device_id = ESP_ZB_HA_TEMPERATURE_SENSOR_DEVICE_ID,
         .app_device_id = ESP_ZB_HA_COMBINED_INTERFACE_DEVICE_ID,
-        .app_device_version = 0
-        
+        .app_device_version = 0 
     };
     esp_zb_endpoint_config_t endpoint_config_9 = {
         .endpoint = 9,
         .app_profile_id = ESP_ZB_AF_HA_PROFILE_ID,
         //.app_device_id = ESP_ZB_HA_TEMPERATURE_SENSOR_DEVICE_ID,
         .app_device_id = ESP_ZB_HA_COMBINED_INTERFACE_DEVICE_ID,
+        .app_device_version = 0   
+    };
+        esp_zb_endpoint_config_t endpoint_config_8 = {
+        .endpoint = 8,
+        .app_profile_id = ESP_ZB_AF_HA_PROFILE_ID,
+        //.app_device_id = ESP_ZB_HA_TEMPERATURE_SENSOR_DEVICE_ID,
+        .app_device_id = ESP_ZB_HA_COMBINED_INTERFACE_DEVICE_ID,
         .app_device_version = 0
-        
     };
     esp_zb_cluster_list_t *cluster_list = esp_zb_zcl_cluster_list_create();
     esp_zb_attribute_list_t *basic_cluster = esp_zb_basic_cluster_create(&(sensor_cfg.basic_cfg));
     ESP_ERROR_CHECK(esp_zb_basic_cluster_add_attr(basic_cluster, ESP_ZB_ZCL_ATTR_BASIC_MANUFACTURER_NAME_ID, MANUFACTURER_NAME));
     ESP_ERROR_CHECK(esp_zb_basic_cluster_add_attr(basic_cluster, ESP_ZB_ZCL_ATTR_BASIC_MODEL_IDENTIFIER_ID, MODEL_IDENTIFIER));
     ESP_ERROR_CHECK(esp_zb_basic_cluster_add_attr(basic_cluster, ESP_ZB_ZCL_ATTR_BASIC_SW_BUILD_ID, FIRMWARE_VERSION));
-    //char DATE_CODE[] = "\n""20240420"; 
-    //ESP_ERROR_CHECK(esp_zb_basic_cluster_add_attr(basic_cluster, ESP_ZB_ZCL_ATTR_BASIC_DATE_CODE_ID, &DATE_CODE));
-
 
     ESP_ERROR_CHECK(esp_zb_cluster_list_add_basic_cluster(cluster_list, basic_cluster, ESP_ZB_ZCL_CLUSTER_SERVER_ROLE));
     ESP_ERROR_CHECK(esp_zb_cluster_list_add_identify_cluster(cluster_list, esp_zb_identify_cluster_create(&(sensor_cfg.identify_cfg)), ESP_ZB_ZCL_CLUSTER_SERVER_ROLE));
     ESP_ERROR_CHECK(esp_zb_cluster_list_add_identify_cluster(cluster_list, esp_zb_zcl_attr_list_create(ESP_ZB_ZCL_CLUSTER_ID_IDENTIFY), ESP_ZB_ZCL_CLUSTER_CLIENT_ROLE));
-    //ESP_ERROR_CHECK(esp_zb_cluster_list_add_temperature_meas_cluster(cluster_list, esp_zb_temperature_meas_cluster_create(&(sensor_cfg.temp_meas_cfg)), ESP_ZB_ZCL_CLUSTER_SERVER_ROLE));
+
     uint16_t undefined_value;
     undefined_value = 0x0000;
      /* Temperature cluster */
@@ -313,49 +262,39 @@ static void esp_zb_task(void *pvParameters)
     ESP_ERROR_CHECK(esp_zb_cluster_list_add_temperature_meas_cluster(cluster_list, esp_zb_temperature_meas_cluster, ESP_ZB_ZCL_CLUSTER_SERVER_ROLE));
 
     //ESP_ZB_ZCL_CLUSTER_ID_METERING
-
-    /* PZEM_004t cluster */
-
     esp_zb_attribute_list_t *esp_zb_PZEM_004t_1_cluster = esp_zb_zcl_attr_list_create(ESP_ZB_ZCL_CLUSTER_ID_ELECTRICAL_MEASUREMENT);
     //MeasurementType
     uint32_t e_meas_type = (uint32_t)0x00000008;    
-    //esp_zb_zcl_electrical_measurement_measurement_type_t e_meas_type =ESP_ZB_ZCL_ELECTRICAL_MEASUREMENT_PHASE_A_MEASUREMENT;
-    //uint8_t tttt = 0x03;
-    //esp_zb_electrical_meas_profilr_a
     esp_zb_electrical_meas_cluster_add_attr(esp_zb_PZEM_004t_1_cluster,ESP_ZB_ZCL_ATTR_ELECTRICAL_MEASUREMENT_MEASUREMENT_TYPE_ID,&e_meas_type);
 
     esp_zb_electrical_meas_cluster_add_attr(esp_zb_PZEM_004t_1_cluster,ESP_ZB_ZCL_ATTR_ELECTRICAL_MEASUREMENT_RMSVOLTAGE_PHB_ID, &undefined_value);
     /* AC Measurement (Phase A)*/
     //TOLERANCE
-    //esp_zb_electrical_meas_cluster_add_attr(esp_zb_PZEM_004t_1_cluster,ESP_ZB_ZCL_ATTR_ELECTRICAL_MEASUREMENT_toler, &undefined_value);  
     esp_zb_electrical_meas_cluster_add_attr(esp_zb_PZEM_004t_1_cluster,ESP_ZB_ZCL_ATTR_ELECTRICAL_MEASUREMENT_RMSVOLTAGE_ID, &undefined_value);         /*!< Represents the most recent RMS voltage reading in @e Volts (V). */
     esp_zb_electrical_meas_cluster_add_attr(esp_zb_PZEM_004t_1_cluster,ESP_ZB_ZCL_ATTR_ELECTRICAL_MEASUREMENT_RMS_VOLTAGE_MIN_ID, &undefined_value);   /*!< Represents the lowest RMS voltage value measured in Volts (V). */
     esp_zb_electrical_meas_cluster_add_attr(esp_zb_PZEM_004t_1_cluster,ESP_ZB_ZCL_ATTR_ELECTRICAL_MEASUREMENT_RMS_VOLTAGE_MAX_ID , &undefined_value);   /*!< Represents the highest RMS voltage value measured in Volts (V). */
-    esp_zb_electrical_meas_cluster_add_attr(esp_zb_PZEM_004t_1_cluster,ESP_ZB_ZCL_ATTR_ELECTRICAL_MEASUREMENT_RMSCURRENT_ID, &undefined_value);         /*!< Represents the most recent RMS current reading in @e Amps (A). */
-    esp_zb_electrical_meas_cluster_add_attr(esp_zb_PZEM_004t_1_cluster,ESP_ZB_ZCL_ATTR_ELECTRICAL_MEASUREMENT_RMS_CURRENT_MIN_ID , &undefined_value);   /*!< Represents the lowest RMS current value measured in Amps (A). */
-    esp_zb_electrical_meas_cluster_add_attr(esp_zb_PZEM_004t_1_cluster,ESP_ZB_ZCL_ATTR_ELECTRICAL_MEASUREMENT_RMS_CURRENT_MAX_ID , &undefined_value);   /*!< Represents the highest RMS current value measured in Amps (A). */
+    //esp_zb_electrical_meas_cluster_add_attr(esp_zb_PZEM_004t_1_cluster,ESP_ZB_ZCL_ATTR_ELECTRICAL_MEASUREMENT_RMSCURRENT_ID, &undefined_value);         /*!< Represents the most recent RMS current reading in @e Amps (A). */
+    //esp_zb_electrical_meas_cluster_add_attr(esp_zb_PZEM_004t_1_cluster,ESP_ZB_ZCL_ATTR_ELECTRICAL_MEASUREMENT_RMS_CURRENT_MIN_ID , &undefined_value);   /*!< Represents the lowest RMS current value measured in Amps (A). */
+    //esp_zb_electrical_meas_cluster_add_attr(esp_zb_PZEM_004t_1_cluster,ESP_ZB_ZCL_ATTR_ELECTRICAL_MEASUREMENT_RMS_CURRENT_MAX_ID , &undefined_value);   /*!< Represents the highest RMS current value measured in Amps (A). */
     esp_zb_electrical_meas_cluster_add_attr(esp_zb_PZEM_004t_1_cluster,ESP_ZB_ZCL_ATTR_ELECTRICAL_MEASUREMENT_ACTIVE_POWER_ID  , &undefined_value);     /*!< Represents the single phase or Phase A, current demand of active power delivered or received at the premises, in @e Watts (W). */
     esp_zb_electrical_meas_cluster_add_attr(esp_zb_PZEM_004t_1_cluster,ESP_ZB_ZCL_ATTR_ELECTRICAL_MEASUREMENT_ACTIVE_POWER_MIN_ID , &undefined_value);  /*!< Represents the lowest AC power value measured in Watts (W). */
     esp_zb_electrical_meas_cluster_add_attr(esp_zb_PZEM_004t_1_cluster,ESP_ZB_ZCL_ATTR_ELECTRICAL_MEASUREMENT_ACTIVE_POWER_MAX_ID  , &undefined_value); /*!< Represents the highest AC power value measured in Watts (W). */
-    esp_zb_electrical_meas_cluster_add_attr(esp_zb_PZEM_004t_1_cluster,ESP_ZB_ZCL_ATTR_ELECTRICAL_MEASUREMENT_POWER_FACTOR_ID, &undefined_value);       /*!< Contains the single phase or PhaseA, Power Factor ratio in 1/100th. */
+    //esp_zb_electrical_meas_cluster_add_attr(esp_zb_PZEM_004t_1_cluster,ESP_ZB_ZCL_ATTR_ELECTRICAL_MEASUREMENT_POWER_FACTOR_ID, &undefined_value);       /*!< Contains the single phase or PhaseA, Power Factor ratio in 1/100th. */
     /* AC Measurement (Non Phase) */
     esp_zb_electrical_meas_cluster_add_attr(esp_zb_PZEM_004t_1_cluster,ESP_ZB_ZCL_ATTR_ELECTRICAL_MEASUREMENT_AC_FREQUENCY_ID, &undefined_value);     /*!< The ACFrequency attribute represents the most recent AC Frequency reading in Hertz (Hz). */
     esp_zb_electrical_meas_cluster_add_attr(esp_zb_PZEM_004t_1_cluster,ESP_ZB_ZCL_ATTR_ELECTRICAL_MEASUREMENT_AC_FREQUENCY_MIN_ID,&undefined_value);     /*!< The ACFrequencyMin attribute represents the lowest AC Frequency value measured in Hertz (Hz). */
     esp_zb_electrical_meas_cluster_add_attr(esp_zb_PZEM_004t_1_cluster,ESP_ZB_ZCL_ATTR_ELECTRICAL_MEASUREMENT_AC_FREQUENCY_MAX_ID, &undefined_value);     /*!< The ACFrequencyMax attribute represents the highest AC Frequency value measured in Hertz (Hz). */
-    //вилучити esp_zb_electrical_meas_cluster_add_attr(esp_zb_PZEM_004t_1_cluster,ESP_ZB_ZCL_ATTR_ELECTRICAL_MEASUREMENT_APPARENT_POWER_ID, &undefined_value);     /*!< Reactive power represents the current demand of reactive power delivered or received at the premises, in kVAr. */
- 
-  /* AC Formatting */
+
+    /* AC Formatting */
     uint16_t u_value =  (uint16_t)(1);
-    esp_zb_electrical_meas_cluster_add_attr(esp_zb_PZEM_004t_1_cluster,ESP_ZB_ZCL_ATTR_ELECTRICAL_MEASUREMENT_ACCURRENT_MULTIPLIER_ID, &u_value);     //!< Provides a value to be multiplied against the @e InstantaneousCurrent and @e RMSCurrent attributes 
+    //esp_zb_electrical_meas_cluster_add_attr(esp_zb_PZEM_004t_1_cluster,ESP_ZB_ZCL_ATTR_ELECTRICAL_MEASUREMENT_ACCURRENT_MULTIPLIER_ID, &u_value);     //!< Provides a value to be multiplied against the @e InstantaneousCurrent and @e RMSCurrent attributes 
     esp_zb_electrical_meas_cluster_add_attr(esp_zb_PZEM_004t_1_cluster,ESP_ZB_ZCL_ATTR_ELECTRICAL_MEASUREMENT_ACPOWER_MULTIPLIER_ID, &u_value);
     uint16_t u_value_1000 = (uint16_t)(1000); 
-    esp_zb_electrical_meas_cluster_add_attr(esp_zb_PZEM_004t_1_cluster,ESP_ZB_ZCL_ATTR_ELECTRICAL_MEASUREMENT_ACCURRENT_DIVISOR_ID,&u_value_1000);    //!< Provides a value to be divided against the @e ACCurrent, @e InstantaneousCurrent and @e RMSCurrent attributes. 
+    //esp_zb_electrical_meas_cluster_add_attr(esp_zb_PZEM_004t_1_cluster,ESP_ZB_ZCL_ATTR_ELECTRICAL_MEASUREMENT_ACCURRENT_DIVISOR_ID,&u_value_1000);    //!< Provides a value to be divided against the @e ACCurrent, @e InstantaneousCurrent and @e RMSCurrent attributes. 
     esp_zb_electrical_meas_cluster_add_attr(esp_zb_PZEM_004t_1_cluster,ESP_ZB_ZCL_ATTR_ELECTRICAL_MEASUREMENT_ACPOWER_DIVISOR_ID,&u_value_1000);
-    
     
     ESP_ERROR_CHECK(esp_zb_cluster_list_add_electrical_meas_cluster(cluster_list, esp_zb_PZEM_004t_1_cluster, ESP_ZB_ZCL_CLUSTER_SERVER_ROLE));  
      
-
     //задаю лічильник саожитої енергії
     esp_zb_attribute_list_t *esp_zb_PZEM_004t_2_cluster = esp_zb_zcl_attr_list_create(ESP_ZB_ZCL_CLUSTER_ID_METERING);
     uint64_t undefined_value1 = (uint64_t)(10);
@@ -388,26 +327,16 @@ static void esp_zb_task(void *pvParameters)
                             ,ESP_ZB_ZCL_ATTR_TYPE_U24
                             ,ESP_ZB_ZCL_ATTR_ACCESS_READ_ONLY
                             ,&u_value13);
-
-                       
+               
     //ESP_ZB_ZCL_ATTR_ACCESS_REPORTING
     ESP_ERROR_CHECK(esp_zb_cluster_list_add_metering_cluster(cluster_list, esp_zb_PZEM_004t_2_cluster, ESP_ZB_ZCL_CLUSTER_SERVER_ROLE));
     //---------------------------------------------------------------------------------------------------------------------------------------
 
-
-
-
     esp_zb_ep_list_add_ep(esp_zb_sensor_ep, cluster_list, endpoint_config);
-    //esp_zb_ep_list_add_ep(esp_zb_sensor_ep, cluster_list, endpoint_config_9);
-
-
-
-
-
+    esp_zb_ep_list_add_ep(esp_zb_sensor_ep, cluster_list, endpoint_config_9);
+    esp_zb_ep_list_add_ep(esp_zb_sensor_ep, cluster_list, endpoint_config_8);
 
     esp_zb_device_register(esp_zb_sensor_ep);
-    //можливо треба повернути, може відповідати за режим роутера
-    //esp_zb_core_action_handler_register(zb_action_handler);
     esp_zb_set_primary_network_channel_set(ESP_ZB_PRIMARY_CHANNEL_MASK);
     ESP_ERROR_CHECK(esp_zb_start(false));
     esp_zb_main_loop_iteration();
@@ -415,53 +344,45 @@ static void esp_zb_task(void *pvParameters)
 /*зчитуємо дані з PZEM-004t*/
 void PMonTask( void * pz )
 {
-        while (1)
+    while (1)
     {
-    //for( ;; )
-    //{
-
+        vTaskDelay( pdMS_TO_TICKS( 100 ) ); 
         // Update config struct with new address
-        pzConf.pzem_addr = 0x03;
+        pzConf.pzem_addr = 0x01;
         PzemGetValues( &pzConf, &pzValues );
-        //printf( "Vrms: %.1fV - Irms: %.3fA - P: %.1fW - E: %.2fWh - Freq: %.1fHz - PF: %.2f\n", pzValues.voltage, pzValues.current, pzValues.power, pzValues.energy, pzValues.frequency, pzValues.pf );
         ESP_LOGI("PZEM-004t 0x03:","Vrms: %.3fV - Irms: %.3fA - P: %.5fW - E: %.5fWh - Freq: %.1fHz - PF: %.2f", pzValues.voltage, pzValues.current, pzValues.power, pzValues.energy, pzValues.frequency, pzValues.pf );
-        //printf( "Freq: %.1fHz - PF: %.2f\n", pzValues.frequency, pzValues.pf );
-        //ESP_LOGI( TAG, "Stack High Water Mark: %ld Bytes free", ( unsigned long int ) uxTaskGetStackHighWaterMark( NULL ) );     /* Show's what's left of the specified stacksize */
+        RMSVOLTAGE= (uint16_t)(pzValues.voltage); //!< Represents the most recent RMS voltage reading in @e Volts (V). 
+        //RMSCURRENT= (uint16_t)(pzValues.current*1000); //!< Represents the most recent RMS current reading in @e Amps (A). 
+        ACTIVE_POWER= (int16_t)(pzValues.power*1000);  //!< Represents the single phase or Phase A, current demand of active power delivered or received at the premises, in @e Watts (W). 
+        //POWER_FACTOR= (int16_t)(pzValues.pf*100);  //!< Contains the single phase or PhaseA, Power Factor ratio in 1/100th. 
+        AC_FREQUENCY= (int16_t)(pzValues.frequency);  //!< The ACFrequency attribute represents the most recent AC Frequency reading in Hertz (Hz). 
+        Summation_delivered= (uint64_t)(pzValues.energy*1000);  //!< Active power represents the current demand of active power delivered or received at the premises, in @e kW 
+        vTaskDelay( pdMS_TO_TICKS( 500 ) ); 
 
         // Update config struct with new address
         pzConf.pzem_addr = 0x02;
         PzemGetValues( &pzConf, &pzValues );
-        //printf( "Vrms: %.1fV - Irms: %.3fA - P: %.1fW - E: %.2fWh - Freq: %.1fHz - PF: %.2f\n", pzValues.voltage, pzValues.current, pzValues.power, pzValues.energy, pzValues.frequency, pzValues.pf );
         ESP_LOGI("PZEM-004t 0x02:","Vrms: %.3fV - Irms: %.3fA - P: %.5fW - E: %.5fWh - Freq: %.1fHz - PF: %.2f", pzValues.voltage, pzValues.current, pzValues.power, pzValues.energy, pzValues.frequency, pzValues.pf );
-        //printf( "Freq: %.1fHz - PF: %.2f\n", pzValues.frequency, pzValues.pf );
+        RMSVOLTAGE_1= (uint16_t)(pzValues.voltage); //!< Represents the most recent RMS voltage reading in @e Volts (V). 
+        //RMSCURRENT_1= (uint16_t)(pzValues.current*1000); //!< Represents the most recent RMS current reading in @e Amps (A). 
+        ACTIVE_POWER_1= (int16_t)(pzValues.power*1000);  //!< Represents the single phase or Phase A, current demand of active power delivered or received at the premises, in @e Watts (W). 
+        //POWER_FACTOR_1= (int16_t)(pzValues.pf*100);  //!< Contains the single phase or PhaseA, Power Factor ratio in 1/100th. 
+        AC_FREQUENCY_1= (int16_t)(pzValues.frequency);  //!< The ACFrequency attribute represents the most recent AC Frequency reading in Hertz (Hz). 
+        Summation_delivered_1= (uint64_t)(pzValues.energy*1000);  //!< Active power represents the current demand of active power delivered or received at the premises, in @e kW 
 
-
+        vTaskDelay( pdMS_TO_TICKS( 500 ) ); 
         // Update config struct with new address
-        pzConf.pzem_addr = 0x01;
+        pzConf.pzem_addr = 0x03;
         PzemGetValues( &pzConf, &pzValues );
-        //printf( "Vrms: %.1fV - Irms: %.3fA - P: %.1fW - E: %.2fWh - Freq: %.1fHz - PF: %.2f\n", pzValues.voltage, pzValues.current, pzValues.power, pzValues.energy, pzValues.frequency, pzValues.pf );
         ESP_LOGI("PZEM-004t 0x01:","Vrms: %.3fV - Irms: %.3fA - P: %.5fW - E: %.5fWh - Freq: %.1fHz - PF: %.2f", pzValues.voltage, pzValues.current, pzValues.power, pzValues.energy, pzValues.frequency, pzValues.pf );
-        //printf( "Freq: %.1fHz - PF: %.2f\n", pzValues.frequency, pzValues.pf );
 
+        RMSVOLTAGE_2= (uint16_t)(pzValues.voltage); //!< Represents the most recent RMS voltage reading in @e Volts (V). 
+        //RMSCURRENT_2= (uint16_t)(pzValues.current*1000); //!< Represents the most recent RMS current reading in @e Amps (A). 
+        ACTIVE_POWER_2= (int16_t)(pzValues.power*1000);  //!< Represents the single phase or Phase A, current demand of active power delivered or received at the premises, in @e Watts (W). 
+        //POWER_FACTOR= (int16_t)(pzValues.pf*100);  //!< Contains the single phase or PhaseA, Power Factor ratio in 1/100th. 
+        AC_FREQUENCY_2= (int16_t)(pzValues.frequency);  //!< The ACFrequency attribute represents the most recent AC Frequency reading in Hertz (Hz). 
+        Summation_delivered_2= (uint64_t)(pzValues.energy*1000);  //!< Active power represents the current demand of active power delivered or received at the premises, in @e kW 
 
-
-
-
-
-        RMSVOLTAGE= (uint16_t)(pzValues.voltage); //!< Represents the most recent RMS voltage reading in @e Volts (V). 
-        //RMSVOLTAGE = (uint16_t)(215);
-        RMSCURRENT= (uint16_t)(pzValues.current*1000); //!< Represents the most recent RMS current reading in @e Amps (A). 
-        //RMSCURRENT = (uint16_t)(1101);
-        ACTIVE_POWER= (int16_t)(pzValues.power*1000);  //!< Represents the single phase or Phase A, current demand of active power delivered or received at the premises, in @e Watts (W). 
-        //ACTIVE_POWER = (uint16_t)(1);
-        POWER_FACTOR= (int16_t)(pzValues.pf*100);  //!< Contains the single phase or PhaseA, Power Factor ratio in 1/100th. 
-        //POWER_FACTOR=(uint16_t)1;
-        /* AC Measurement (Non Phase) */
-        AC_FREQUENCY= (int16_t)(pzValues.frequency);  //!< The ACFrequency attribute represents the most recent AC Frequency reading in Hertz (Hz). 
-        //AC_FREQUENCY=(uint16_t)60;     
-        Summation_delivered= (uint64_t)(pzValues.energy*1000);  //!< Active power represents the current demand of active power delivered or received at the premises, in @e kW 
-        //Summation_delivered= (uint64_t)(16);  
-            
         vTaskDelay( pdMS_TO_TICKS( 15000 ) );   
 
 
