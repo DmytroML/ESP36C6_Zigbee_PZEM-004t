@@ -35,7 +35,8 @@ pzem_setup_t pzConf =
     .pzem_uart   = UART_NUM_1,              /*  <== Specify the UART you want to use, UART_NUM_0, UART_NUM_1, UART_NUM_2 (ESP32 specific) */
     .pzem_rx_pin = GPIO_NUM_4,             /*  <== GPIO for RX */
     .pzem_tx_pin = GPIO_NUM_5,             /*  <== GPIO for TX */
-    .pzem_addr   = 0xF8,      /*  If your module has a different address, specify here or update the variable in pzem004tv3.h */
+    //.pzem_addr   = 0xF8,      /*  If your module has a different address, specify here or update the variable in pzem004tv3.h */
+    .pzem_addr   = 0x01, 
 };
 //#define TXD_PIN (GPIO_NUM_5)
 //#define RXD_PIN (GPIO_NUM_4)
@@ -246,7 +247,7 @@ static void esp_zb_task(void *pvParameters)
     esp_zb_attribute_list_t *basic_cluster = esp_zb_basic_cluster_create(&(sensor_cfg.basic_cfg));
     ESP_ERROR_CHECK(esp_zb_basic_cluster_add_attr(basic_cluster, ESP_ZB_ZCL_ATTR_BASIC_MANUFACTURER_NAME_ID, MANUFACTURER_NAME));
     ESP_ERROR_CHECK(esp_zb_basic_cluster_add_attr(basic_cluster, ESP_ZB_ZCL_ATTR_BASIC_MODEL_IDENTIFIER_ID, MODEL_IDENTIFIER));
-    ESP_ERROR_CHECK(esp_zb_basic_cluster_add_attr(basic_cluster, ESP_ZB_ZCL_ATTR_BASIC_SW_BUILD_ID, FIRMWARE_VERSION));
+    //ESP_ERROR_CHECK(esp_zb_basic_cluster_add_attr(basic_cluster, ESP_ZB_ZCL_ATTR_BASIC_SW_BUILD_ID, FIRMWARE_VERSION));
 
     ESP_ERROR_CHECK(esp_zb_cluster_list_add_basic_cluster(cluster_list, basic_cluster, ESP_ZB_ZCL_CLUSTER_SERVER_ROLE));
     ESP_ERROR_CHECK(esp_zb_cluster_list_add_identify_cluster(cluster_list, esp_zb_identify_cluster_create(&(sensor_cfg.identify_cfg)), ESP_ZB_ZCL_CLUSTER_SERVER_ROLE));
@@ -264,7 +265,7 @@ static void esp_zb_task(void *pvParameters)
     //ESP_ZB_ZCL_CLUSTER_ID_METERING
     esp_zb_attribute_list_t *esp_zb_PZEM_004t_1_cluster = esp_zb_zcl_attr_list_create(ESP_ZB_ZCL_CLUSTER_ID_ELECTRICAL_MEASUREMENT);
     //MeasurementType
-    uint32_t e_meas_type = (uint32_t)0x00000008;    
+    uint16_t e_meas_type = (uint16_t)0x0008;    
     esp_zb_electrical_meas_cluster_add_attr(esp_zb_PZEM_004t_1_cluster,ESP_ZB_ZCL_ATTR_ELECTRICAL_MEASUREMENT_MEASUREMENT_TYPE_ID,&e_meas_type);
 
     esp_zb_electrical_meas_cluster_add_attr(esp_zb_PZEM_004t_1_cluster,ESP_ZB_ZCL_ATTR_ELECTRICAL_MEASUREMENT_RMSVOLTAGE_PHB_ID, &undefined_value);
@@ -322,7 +323,7 @@ static void esp_zb_task(void *pvParameters)
                             ,ESP_ZB_ZCL_ATTR_TYPE_8BIT_ENUM
                             ,ESP_ZB_ZCL_ATTR_ACCESS_READ_ONLY
                             ,&u_value12); 
-    uint16_t u_value13 =  (uint16_t)(1000);                        
+    uint16_t u_value13 =  (uint16_t)(1000);      //!!!!!!                  
     esp_zb_cluster_add_attr(esp_zb_PZEM_004t_2_cluster,ESP_ZB_ZCL_CLUSTER_ID_METERING,ESP_ZB_ZCL_ATTR_METERING_DIVISOR_ID
                             ,ESP_ZB_ZCL_ATTR_TYPE_U24
                             ,ESP_ZB_ZCL_ATTR_ACCESS_READ_ONLY

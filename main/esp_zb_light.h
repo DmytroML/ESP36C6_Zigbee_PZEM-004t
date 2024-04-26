@@ -1,19 +1,5 @@
-/*
- * SPDX-FileCopyrightText: 2021-2022 Espressif Systems (Shanghai) CO LTD
- *
- * SPDX-License-Identifier: CC0-1.0
- *
- * Zigbee HA_color_dimmable_light Example
- *
- * This example code is in the Public Domain (or CC0 licensed, at your option.)
- *
- * Unless required by applicable law or agreed to in writing, this
- * software is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
- * CONDITIONS OF ANY KIND, either express or implied.
- */
-
 #include "esp_zigbee_core.h"
-#include "light_driver.h"
+//#include "light_driver.h"
 
 /* Zigbee configuration */
 #define MAX_CHILDREN                      10                                    /* the max amount of connected devices */
@@ -23,13 +9,14 @@
 
 #define ED_AGING_TIMEOUT                ESP_ZB_ED_AGING_TIMEOUT_64MIN
 #define ED_KEEP_ALIVE                   3000    /* 3000 millisecond */
-#define ESP_TEMP_SENSOR_UPDATE_INTERVAL (1)     /* Local sensor update interval (second) */
+#define ESP_TEMP_SENSOR_UPDATE_INTERVAL (15)     /* Local sensor update interval (second) */
 #define ESP_TEMP_SENSOR_MIN_VALUE       (-10)   /* Local sensor min measured value (degree Celsius) */
 #define ESP_TEMP_SENSOR_MAX_VALUE       (80)    /* Local sensor max measured value (degree Celsius) */
 #define MANUFACTURER_NAME               "\x10""ESP_EN_MONITOR"
-#define MODEL_IDENTIFIER                "\x09"CONFIG_IDF_TARGET
+//#define MODEL_IDENTIFIER                "\x09"CONFIG_IDF_TARGET
+#define MODEL_IDENTIFIER                "\x08""TS011F"
 #define MODEL_NAME                      "\r""PZEM Sensor"
-#define FIRMWARE_VERSION                "\t""ver-0.1"
+//#define FIRMWARE_VERSION                "\t""ver-0.1"
 
 
 
