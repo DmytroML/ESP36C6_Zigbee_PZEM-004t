@@ -12,7 +12,7 @@
  * CONDITIONS OF ANY KIND, either express or implied.
  */
 
-#include "esp_zb_light.h"
+#include "esp_zb_PZEM_004t.h"
 #include "esp_check.h"
 #include "esp_log.h"
 #include "nvs_flash.h"
