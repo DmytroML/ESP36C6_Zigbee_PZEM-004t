@@ -11,3 +11,9 @@ https://github.com/espressif/esp-zigbee-sdk/tree/main/examples/esp_zigbee_HA_sam
 <p align="center">
     <img src="Image1.png" id="tsa" alt="Time Series Forecasting">
 </p>
+<p align="center">
+    <img src="Image2.png" id="tsa" alt="Time Series Forecasting">
+</p>
+<p align="center">
+    <img src="Image3.jpg" id="tsa" alt="Time Series Forecasting">
+</p>
