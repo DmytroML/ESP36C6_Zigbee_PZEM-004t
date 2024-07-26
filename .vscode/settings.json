@@ -1,3 +1,8 @@
 {
-    "idf.adapterTargetName": "esp32c6"
+    "idf.adapterTargetName": "esp32h2",
+    "idf.portWin": "COM13",
+    "idf.openOcdConfigs": [
+        "board/esp32h2-builtin.cfg"
+    ],
+    "idf.flashType": "UART"
 }
