@@ -15,7 +15,7 @@ dependencies:
     component_hash: null
     source:
       type: idf
-    version: 5.2.2
+    version: 5.3.0
 manifest_hash: e37070faf79558904480c0be75bcb52209aa6a6111d157e648add51a9c41333d
 target: esp32h2
 version: 1.0.0
