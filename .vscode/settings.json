@@ -4,5 +4,6 @@
     "idf.openOcdConfigs": [
         "board/esp32h2-builtin.cfg"
     ],
-    "idf.flashType": "UART"
+    "idf.flashType": "UART",
+    "cmake.configureOnOpen": false
 }
